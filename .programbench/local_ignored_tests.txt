@@ -1,0 +1,20 @@
+# Course-side exclusions: tests that are environment-sensitive outside the
+# benchmark containers. Format: <branch>/<classname>.<testname>
+
+# bore is a network tunnel; its client error text comes from the OS resolver and
+# socket layer. macOS getaddrinfo emits different DNS/hostname error strings than
+# glibc, ECONNREFUSED is errno 61 not 111, and invalid-hostname handling diverges.
+
+8f4b78a7e9eb/tests.test_cli_basics.test_env_bore_server_used_when_no_to_flag
+8f4b78a7e9eb/tests.test_client.test_dns_lookup_failure
+8f4b78a7e9eb/tests.test_client.test_empty_server_address
+8f4b78a7e9eb/tests.test_client.test_env_server_invalid
+8f4b78a7e9eb/tests.test_client.test_invalid_domain_name
+8f4b78a7e9eb/tests.test_client.test_port_in_server_address
+8f4b78a7e9eb/tests.test_client.test_very_long_hostname
+8f4b78a7e9eb/tests.test_client.test_whitespace_server_address
+8f4b78a7e9eb/tests.test_edge_cases.test_local_empty_hostname@server_tests
+8f4b78a7e9eb/tests.test_edge_cases.test_local_nonexistent_hostname@server_tests
+8f4b78a7e9eb/tests.test_edge_cases.test_local_to_arg_with_spaces@server_tests
+8f4b78a7e9eb/tests.test_edge_cases.test_local_to_arg_with_tab@server_tests
+8f4b78a7e9eb/tests.test_edge_cases.test_local_unicode_hostname@server_tests
