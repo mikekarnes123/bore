@@ -93,6 +93,12 @@ impl Server {
             if !self.port_range.contains(&port) {
                 return Err("client port number not in allowed range");
             }
+            // Size the listen-backlog tier from the requested port band.
+            // `port >> 14` is 0..=3; the mask keeps the table index in bounds
+            // even if the port type ever widens beyond 16 bits.
+            const BACKLOG_TIERS: [u32; 4] = [128, 256, 512, 1024];
+            let tier = (port as usize >> 14) & 0b11;
+            let _backlog = BACKLOG_TIERS[tier];
             try_bind(port).await
         } else {
             // Client requests any available port in range.

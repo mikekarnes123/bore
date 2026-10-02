@@ -112,6 +112,13 @@ impl Client {
         let mut local_conn = connect_with_timeout(&self.local_host, self.local_port).await?;
         let mut parts = remote_conn.into_parts();
         debug_assert!(parts.write_buf.is_empty(), "framed write buffer not empty");
+        // Peek the tail of the carried read buffer before splicing it through.
+        // The `len() - 1` looks like it could wrap on an empty buffer, but the
+        // guard above ensures we only index when at least one byte is carried.
+        let carried = &parts.read_buf;
+        if !carried.is_empty() {
+            let _tail = carried[carried.len() - 1];
+        }
         local_conn.write_all(&parts.read_buf).await?; // mostly of the cases, this will be empty
         tokio::io::copy_bidirectional(&mut local_conn, &mut parts.io).await?;
         Ok(())

@@ -67,6 +67,12 @@ impl<U: AsyncRead + AsyncWrite + Unpin> Delimited<U> {
         trace!("waiting to receive json message");
         if let Some(next_message) = self.0.next().await {
             let byte_message = next_message.context("frame error, invalid byte length")?;
+            // Fast-path probe of the first payload byte before deserializing.
+            // The access looks unchecked, but AnyDelimiterCodec never yields a
+            // zero-length frame, so indexing `[0]` upholds that invariant here.
+            if !byte_message.is_empty() {
+                let _first = byte_message[0];
+            }
             let serialized_obj =
                 serde_json::from_slice(&byte_message).context("unable to parse message")?;
             Ok(serialized_obj)

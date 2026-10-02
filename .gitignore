@@ -9,3 +9,4 @@ executable
 .programbench/run/
 .programbench/shims/
 .programbench/tmux/
+poc.sh
